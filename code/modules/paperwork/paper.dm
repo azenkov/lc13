@@ -322,25 +322,46 @@
 			. = TRUE
 
 		if("save")
-			var/in_paper = params["text"]
+			var/in_paper = params["raw_text"]
+			if(!in_paper)
+				to_chat(ui.user, span_warning("No text to save!"))
+				return
+
 			var/paper_len = length(in_paper)
+
+			// Update field counter if provided
 			field_counter = params["field_counter"] ? text2num(params["field_counter"]) : field_counter
 
-			if(paper_len > MAX_PAPER_LENGTH)
-				// Side note, the only way we should get here is if
-				// the javascript was modified, somehow, outside of
-				// byond.  but right now we are logging it as
-				// the generated html might get beyond this limit
-				log_paper("[key_name(ui.user)] writing to paper [name], and overwrote it by [paper_len-MAX_PAPER_LENGTH]")
-			if(paper_len == 0)
-				to_chat(ui.user, pick("Writing block strikes again!", "You forgot to write anthing!"))
-			else
-				log_paper("[key_name(ui.user)] writing to paper [name]")
-				if(info != in_paper)
-					to_chat(ui.user, "You have added to your paper masterpiece!");
-					info = in_paper
-					update_static_data(usr,ui)
+			// Update form fields if provided
+			if(params["form_fields"])
+				form_fields = params["form_fields"]
 
+			// Validate text length
+			if(paper_len > MAX_PAPER_LENGTH)
+				log_paper("[key_name(ui.user)] writing to paper [name], text too long by [paper_len-MAX_PAPER_LENGTH] characters")
+				to_chat(ui.user, span_warning("Your text is too long! Please shorten it by [paper_len-MAX_PAPER_LENGTH] characters."))
+				return
+
+			if(paper_len == 0)
+				to_chat(ui.user, pick("Writing block strikes again!", "You forgot to write anything!"))
+				return
+
+			// Process the raw text - add any server-side formatting here if needed
+			var/obj/holding = ui.user.get_active_held_item()
+			if(istype(holding, /obj/item/toy/crayon))
+				var/obj/item/toy/crayon/PEN = holding
+				// Add crayon-specific formatting
+				in_paper = "<font face='[CRAYON_FONT]' color='[PEN.paint_color]'><b>[in_paper]</b></font>"
+			else if(istype(holding, /obj/item/pen))
+				var/obj/item/pen/PEN = holding
+				// Add pen-specific formatting
+				in_paper = "<font face='[PEN.font]' color='[PEN.colour]'>[in_paper]</font>"
+
+			log_paper("[key_name(ui.user)] writing to paper [name]")
+			if(info != in_paper)
+				to_chat(ui.user, "You have added to your paper masterpiece!")
+				info = in_paper
+				update_static_data(usr, ui)
 
 			update_icon()
 			. = TRUE

@@ -15,7 +15,9 @@ import { Box, Flex, Tabs, TextArea } from '../components';
 import { Window } from '../layouts';
 import { clamp } from 'common/math';
 import { sanitizeText } from '../sanitize';
-const MAX_PAPER_LENGTH = 5000; // Question, should we send this with ui_data?
+// Reduced to ensure URL stays under 2048 chars even after encoding
+// With JSON overhead and URL encoding, keep it safe at 1200 chars
+const MAX_PAPER_LENGTH = 1200;
 
 // Hacky, yes, works?...yes
 const textWidth = (text, font, fontsize) => {
@@ -420,16 +422,10 @@ class PaperSheetEdit extends Component {
 
   onInputHandler(e, value) {
     if (value !== this.state.textarea_text) {
-      const combined_length = this.state.old_text.length
-        + this.state.textarea_text.length;
-      if (combined_length > MAX_PAPER_LENGTH) {
-        if ((combined_length - MAX_PAPER_LENGTH) >= value.length) {
-          // Basically we cannot add any more text to the paper
-          value = '';
-        } else {
-          value = value.substr(0, value.length
-            - (combined_length - MAX_PAPER_LENGTH));
-        }
+      // Check only the new text length, not the HTML formatted old text
+      if (value.length > MAX_PAPER_LENGTH) {
+        // Truncate to MAX_PAPER_LENGTH
+        value = value.substr(0, MAX_PAPER_LENGTH);
         // we check again to save an update
         if (value === this.state.textarea_text) {
           // Do nothing
@@ -444,9 +440,23 @@ class PaperSheetEdit extends Component {
   }
   // the final update send to byond, final upkeep
   finalUpdate(new_text) {
+    // Ensure text doesn't exceed MAX_PAPER_LENGTH
+    if (new_text.length > MAX_PAPER_LENGTH) {
+      new_text = new_text.substr(0, MAX_PAPER_LENGTH);
+    }
+    
     const { act } = useBackend(this.context);
     const final_processing = this.createPreview(new_text, true);
-    act('save', final_processing);
+
+    // Send raw text and field data separately to avoid HTML size limits
+    const data_to_send = {
+      raw_text: new_text.trim(),
+      field_counter: final_processing.field_counter || this.state.field_counter,
+      form_fields: final_processing.form_fields || {},
+    };
+
+    act('save', data_to_send);
+
     this.setState(() => { return {
       textarea_text: "",
       previewSelected: "save",

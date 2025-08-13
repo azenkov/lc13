@@ -367,7 +367,6 @@ class PaperSheetEdit extends Component {
     super(props, context);
     this.state = {
       previewSelected: "Preview",
-      old_text: props.value || "",
       textarea_text: "",
       combined_text: props.value || "",
     };
@@ -444,7 +443,7 @@ class PaperSheetEdit extends Component {
     if (new_text.length > MAX_PAPER_LENGTH) {
       new_text = new_text.substr(0, MAX_PAPER_LENGTH);
     }
-    
+
     const { act } = useBackend(this.context);
     const final_processing = this.createPreview(new_text, true);
 

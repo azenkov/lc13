@@ -15,9 +15,9 @@ import { Box, Flex, Tabs, TextArea } from '../components';
 import { Window } from '../layouts';
 import { clamp } from 'common/math';
 import { sanitizeText } from '../sanitize';
-// Reduced to ensure URL stays under 2048 chars even after encoding
-// With JSON overhead and URL encoding, keep it safe at 1200 chars
-const MAX_PAPER_LENGTH = 1200;
+// With chunking support, we can now use the full paper length from DM
+// The chunking system will automatically split large data
+const MAX_PAPER_LENGTH = 5000;
 
 // Hacky, yes, works?...yes
 const textWidth = (text, font, fontsize) => {
@@ -447,14 +447,7 @@ class PaperSheetEdit extends Component {
     const { act } = useBackend(this.context);
     const final_processing = this.createPreview(new_text, true);
 
-    // Send raw text and field data separately to avoid HTML size limits
-    const data_to_send = {
-      raw_text: new_text.trim(),
-      field_counter: final_processing.field_counter || this.state.field_counter,
-      form_fields: final_processing.form_fields || {},
-    };
-
-    act('save', data_to_send);
+    act('save', final_processing);
 
     this.setState(() => { return {
       textarea_text: "",

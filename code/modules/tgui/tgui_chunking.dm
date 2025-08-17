@@ -25,7 +25,7 @@ GLOBAL_LIST_EMPTY(tgui_chunk_storage)
 	GLOB.tgui_chunk_storage[chunk_id] = src
 	
 	// Set up timeout
-	addtimer(CALLBACK(src, .proc/timeout_check), timeout)
+	addtimer(CALLBACK(src, PROC_REF(timeout_check)), timeout)
 
 /datum/tgui_chunk_transfer/proc/timeout_check()
 	if(chunks_received < total_chunks)

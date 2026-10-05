@@ -1,0 +1,4 @@
+author: "Kitsunemitsu"
+delete-after: True
+changes:
+  - bugfix: "fixed Lunar Rabbit being commented out in LCL"

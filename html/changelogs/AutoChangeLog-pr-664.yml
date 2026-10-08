@@ -1,5 +1,0 @@
-author: "azenkov"
-delete-after: True
-changes:
-  - bugfix: "Chat now auto-scrolls to new messages right after connecting."
-  - bugfix: "The chat tab no longer counts messages as unread while you're scrolled to the bottom."

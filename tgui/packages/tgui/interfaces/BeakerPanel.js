@@ -5,9 +5,9 @@ import { Window } from '../layouts';
 
 
 // This is a button that spawns a container for its section, based on the chosen container type and reagent stack.
-const SpawnButton = (props, context) => {
+const SpawnButton = props => {
   const { container, reagents, currentTemperature } = props;
-  const { act } = useBackend(context);
+  const { act } = useBackend();
 
   // Assembles the spawn info in the format expected by the .dm file.
   const GatherSpawnInfo = (container, reagents) => {
@@ -44,7 +44,7 @@ const SpawnButton = (props, context) => {
 
 
 // Dropdown that creates and adds a new reagent object to the container section's reagent stack.
-const NewReagentEntry = (props, context) => {
+const NewReagentEntry = props => {
   const { addReagent, reagentList, reagent_name_to_type_map } = props;
 
   const newReagent = chosen => {
@@ -68,7 +68,7 @@ const NewReagentEntry = (props, context) => {
 };
 
 // A table row representing a reagent object. Has a button to delete it or an input to modify its amount.
-const ReagentEntry = (props, context) => {
+const ReagentEntry = props => {
   const { subject, addReagent, removeReagent } = props;
 
   return (
@@ -88,7 +88,7 @@ const ReagentEntry = (props, context) => {
 };
 
 // Consists of the current reagent stack for this container section, and NewReagentEntry to add more.
-const ReagentStack = (props, context) => {
+const ReagentStack = props => {
   const { filter, reagent_names, reagentStackCallback, currentReagents, reagent_name_to_type_map } = props;
 
   // addReagent is what's used to both modify an existing reagent object's amount, or add a new one.
@@ -153,7 +153,7 @@ const ReagentStack = (props, context) => {
 };
 
 // A large functional component containing all the info and buttons to manage containers and reagents in this interface.
-const ContainerSection = (props, context) => {
+const ContainerSection = props => {
   const { id, currentContainer, reagents, container_paths, reagent_names,
     filter, currentTemperature, temperatureSetter,
     reagentFilter, setterFunction, reagentStackCallback,
@@ -203,25 +203,25 @@ const ContainerSection = (props, context) => {
 
 
 // The actual interface, the main component, our export.
-export const BeakerPanel = (props, context) => {
-  const { act, data } = useBackend(context);
+export const BeakerPanel = props => {
+  const { act, data } = useBackend();
   const { reagents, containers } = data;
 
   // ---* States *---
   // Simple text filters.
-  const [containerFilter, setContainerFilter] = useLocalState(context, "containerFilter", "beaker");
-  const [reagentFilter, setReagentFilter] = useLocalState(context, "reagentFilter", "");
+  const [containerFilter, setContainerFilter] = useLocalState("containerFilter", "beaker");
+  const [reagentFilter, setReagentFilter] = useLocalState("reagentFilter", "");
   // Chosen container; this holds a container type.
-  const [chosenContainerOne, setChosenContainerOne] = useLocalState(context, "chosenContainerOne", null);
-  const [chosenContainerTwo, setChosenContainerTwo] = useLocalState(context, "chosenContainerTwo", null);
+  const [chosenContainerOne, setChosenContainerOne] = useLocalState("chosenContainerOne", null);
+  const [chosenContainerTwo, setChosenContainerTwo] = useLocalState("chosenContainerTwo", null);
   // Container temperatures!
-  const [containerOneTemp, setContainerOneTemp] = useLocalState(context, "containerOneTemp", 150);
-  const [containerTwoTemp, setContainerTwoTemp] = useLocalState(context, "containerTwoTemp", 150);
+  const [containerOneTemp, setContainerOneTemp] = useLocalState("containerOneTemp", 150);
+  const [containerTwoTemp, setContainerTwoTemp] = useLocalState("containerTwoTemp", 150);
   // Currently assembled reagent stacks. Holds an object with reagent types and amounts.
-  const [reagentStackOne, setReagentStackOne] = useLocalState(context, "reagentStackOne", {});
-  const [reagentStackTwo, setReagentStackTwo] = useLocalState(context, "reagentStackTwo", {});
+  const [reagentStackOne, setReagentStackOne] = useLocalState("reagentStackOne", {});
+  const [reagentStackTwo, setReagentStackTwo] = useLocalState("reagentStackTwo", {});
   // Grenade detonation timer, in seconds.
-  const [grenadeTimer, setGrenadeTimer] = useLocalState(context, "grenadeTimer", 5);
+  const [grenadeTimer, setGrenadeTimer] = useLocalState("grenadeTimer", 5);
 
   // ---* Names and Mapping *---
   // Arrays with the paths/names of all containers/reagents.

@@ -10,8 +10,8 @@ const MAP_SIZE = 300;
 const MAP_MIN_HEIGHT = 160;
 const GRID_ZONE_CELL_SIZE = 10;
 
-export const EnkephalinGridStation = (props, context) => {
-  const { act, data } = useBackend(context);
+export const EnkephalinGridStation = props => {
+  const { act, data } = useBackend();
   const {
     focus_x,
     focus_y,
@@ -38,9 +38,8 @@ export const EnkephalinGridStation = (props, context) => {
     has_previous_move = false,
   } = data;
 
-  const [zoom, setZoom] = useLocalState(context, 'zoom', 2);
-  const [hoveredDir, setHoveredDir] = useLocalState(
-    context, 'hoveredDir', null
+  const [zoom, setZoom] = useLocalState('zoom', 2);
+  const [hoveredDir, setHoveredDir] = useLocalState('hoveredDir', null
   );
 
   const zoomIn = () => setZoom(Math.min(zoom + 1, 5));
@@ -203,7 +202,6 @@ export const EnkephalinGridStation = (props, context) => {
                     focus_y={focus_y}
                     zoneDistMult={zoneDistMult}
                     act={act}
-                    context={context}
                     setHoveredDir={setHoveredDir} />
                 </Section>
               </Stack.Item>
@@ -1106,7 +1104,7 @@ const MovementPrediction = props => {
 const MovementControls = props => {
   const {
     selected_core, focus_x, focus_y, zoneDistMult = 1.0,
-    act, context, setHoveredDir,
+    act, setHoveredDir,
   } = props;
 
   if (!selected_core) {
@@ -1144,7 +1142,6 @@ const MovementControls = props => {
           focus_x={focus_x}
           focus_y={focus_y}
           act={act}
-          context={context}
           setHoveredDir={setHoveredDir} />
       ) : mt === 2 || mt === 3 || mt === 7 ? (
         <Box textAlign="center">
@@ -1255,9 +1252,9 @@ const DirBtn = props => {
 };
 
 const TeleportControls = props => {
-  const { max_range, focus_x, focus_y, act, context, setHoveredDir } = props;
-  const [targetX, setTargetX] = useLocalState(context, 'teleportX', focus_x);
-  const [targetY, setTargetY] = useLocalState(context, 'teleportY', focus_y);
+  const { max_range, focus_x, focus_y, act, setHoveredDir } = props;
+  const [targetX, setTargetX] = useLocalState('teleportX', focus_x);
+  const [targetY, setTargetY] = useLocalState('teleportY', focus_y);
 
   const distance = Math.sqrt(
     Math.pow(targetX - focus_x, 2) + Math.pow(targetY - focus_y, 2)

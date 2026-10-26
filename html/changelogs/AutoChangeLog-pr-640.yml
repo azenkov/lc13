@@ -1,0 +1,6 @@
+author: "Destrok171"
+delete-after: True
+changes:
+  - balance: "Breathing oxygen damage regeneration 16 -> 12 per breath (2/s -> 1.5/s)."
+  - bugfix: "Being revived (such as by AHeal or a revival wand) should properly remove monochrome vision."
+  - bugfix: "Will always check to clear the Not Enough Oxygen alert when breathing."
